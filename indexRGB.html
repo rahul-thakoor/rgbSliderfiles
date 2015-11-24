@@ -1,0 +1,147 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, height=device-height">
+<script>
+
+var ipValue;
+var connection;
+
+connection.onopen = function () {
+	connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
+	connection.send('ping');
+	//ws.send("Hello, Ardunio");
+};
+
+connection.onerror = function (error) {
+	console.log('WebSocket Error ', error);
+};
+
+connection.onmessage = function (e) {
+	console.log('Server: ', e.data);
+	
+};
+
+function ledFn() {
+	var toSend = "LED";
+	connection.send(toSend); 
+};
+
+function resetFn() {
+	var toSend = "RESET";
+	connection.send(toSend); 
+};
+	/*window.addEventListener('deviceorientation', function(event) {
+	var xSend=(((event.alpha)*(255/360)).toFixed(0));	
+	var ySend=(((event.beta+180)*(255/360)).toFixed(0));	
+	var zSend=(((event.gamma+90)*(255/180)).toFixed(0));	
+	document.form1.x.value=xSend;	
+    document.form1.y.value=ySend;
+	document.form1.z.value=zSend;
+	
+	function sendY(){
+	connection.send(ySend);
+	}
+	function sendZ(){
+	connection.send(zSend);
+	}
+	});*/
+function mod(){
+var text = document.getElementById('ip').value;
+ipValue = text;	
+connection = new WebSocket(ipValue, ['arduino']); 	
+//console.log(text)
+console.log("IP value changed to:"+ipValue);
+}	
+function showX(){
+	window.addEventListener('deviceorientation', function(event) {
+	var xSend=(((event.alpha)*(255/360)).toFixed(0));
+	document.form1.x.value = xSend;	
+	
+	
+	});}
+	function sendX(){
+    var x = document.form1.x.value;
+    connection.send("x"+x);    
+        
+    }
+function showY(){
+	window.addEventListener('deviceorientation', function(event) {
+	var ySend=(((event.beta+180)*(255/360)).toFixed(0));
+		document.form1.y.value = ySend;	
+		
+	});}	
+    
+    function sendY(){
+    var y = document.form1.y.value;
+    connection.send("y"+y);    
+        
+    }
+function showZ(){
+	window.addEventListener('deviceorientation', function(event) {
+	var zSend=(((event.gamma+90)*(255/180)).toFixed(0));
+		document.form1.z.value = zSend;	
+		
+	});}
+    
+    function sendZ(){
+    var z = document.form1.z.value;
+    connection.send("z"+z);    
+        
+    }
+function showValueR(newValue)
+                {
+                        document.getElementById("outputTextR").innerHTML=newValue;
+					   
+                        connection.send("x"+newValue);
+                }	
+	
+function showValueG(newValue)
+                {
+                        document.getElementById("outputTextG").innerHTML=newValue;
+					   
+                        connection.send("y"+newValue);
+                }
+	function showValueB(newValue)
+                {
+                        document.getElementById("outputTextB").innerHTML=newValue;
+					   
+                        connection.send("z"+newValue);
+                }	
+
+</script>
+
+</head>
+<body style="height=100% width=100%">
+RGB SLIDER<p></p>
+<input type="button" onclick="ledFn()">Blink LED	<p><p></p>
+	<input type="button" onclick="resetFn()">Reset LED <p></p>
+	
+<table id="outside">
+    <input type="text"  placeholder="Input the IP of your Websocket server" id="ip" onchange="mod()"> E.g ws://192.168.1.100:81/ </tr>
+    
+</table>
+  
+<form name="form1" id="form1">
+	X-axis:<input type="text" name="x"><p></p>
+	<input type="button" onclick="showX()" >Listen to X-axis value<p></p>
+    <input type="radio" onclick ="sendX()" >Change R value<p></p>
+    Y-axis:  <input type="text" name="y"><p></p>
+	<input type="button" onclick="showY()">Listen to Y-axis value<p>    <p />
+    <input type="radio" onclick ="sendY()" >Change G value<p></p>
+    Z-axis: <input type="text" name="z"><p></p>
+    <input type="button" onclick="showZ()">Listen to Z-axis value<p>
+    <input type="radio" onclick ="sendZ()" >Change B value<p></p>
+    </form>
+	
+	<input type="range" id= "inputSliderR" min="0" max="255" value="0" step="5" oninput="showValueR(this.value)" /> R      
+     <br><br><span id="outputTextR">0</span><p></p>
+	<input type="range" id= "inputSliderG" min="0" max="255" value="0" step="5" oninput="showValueG(this.value)" />  G     
+     <br><br><span id="outputTextG">0</span><p></p>
+	<input type="range" id= "inputSliderB" min="0" max="255" value="0" step="5" oninput="showValueB(this.value)" />  B     
+     <br><br><span id="outputTextB">0</span><p></p>
+	
+Author: Rahul
+	Credits: 1.Markus Sattler [https://github.com/Links2004]
+	         2.Martin [http://www.instructables.com/member/martin2250/]
+</body>
+</html> 
